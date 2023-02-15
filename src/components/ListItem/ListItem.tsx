@@ -2,7 +2,8 @@ import React, { useCallback, useMemo, useState } from "react"
 import { ScrollView, View } from "react-native"
 import { Text } from "@react-native-material/core"
 import { TodoItem } from "../TodoItem/TodoItem"
-import { Modal } from "../Modal/Modal"
+import { Popup } from "../Popup/Popup"
+import { InputField } from "../Modal/InputField"
 import { useAppDispatch, useAppSelector } from "../../../store"
 import { deleteTodo, doneTodo, moveTodo } from "../../../store/slice"
 import { selectTodos } from "../../../store/selectors"
@@ -16,6 +17,8 @@ export const ListItem = () => {
   const orientationPortrait = orientation === "PORTRAIT"
 
   const [isVisibleModal, setIsVisibleModal] = useState(false)
+  const [isShowPopup, setIsShowPopup] = useState(false)
+  const [deletedId, setDeletedId] = useState("")
   const { todos } = useAppSelector(selectTodos)
   const dispatch = useAppDispatch()
 
@@ -27,8 +30,12 @@ export const ListItem = () => {
       if (action === Actions.DONE || action === Actions.UNDONE) {
         dispatch(doneTodo(id))
       } else if (action === Actions.REMOTE) {
-        dispatch(deleteTodo(id))
-      } else if (action === Actions.MOVE) {
+        setDeletedId(id)
+        setIsShowPopup(true)
+      } else if (
+        action === Actions.MOVE ||
+        action === Actions.MOVETONOTURGENT
+      ) {
         dispatch(moveTodo(id))
       }
     },
@@ -38,6 +45,20 @@ export const ListItem = () => {
   const handleOpenModal = useCallback(() => {
     setIsVisibleModal(false)
   }, [])
+
+  const handleDelete = useCallback(
+    (e: boolean) => {
+      if (e && deletedId) {
+        setDeletedId("")
+        setIsShowPopup(false)
+        dispatch(deleteTodo(deletedId))
+      } else {
+        setDeletedId("")
+        setIsShowPopup(false)
+      }
+    },
+    [dispatch, deletedId]
+  )
 
   return (
     <View
@@ -71,7 +92,11 @@ export const ListItem = () => {
               )
           )}
         </ScrollView>
-        <Modal handleOpenModal={handleOpenModal} visible={isVisibleModal} />
+        {isShowPopup && <Popup handleDelete={handleDelete} />}
+        <InputField
+          handleOpenModal={handleOpenModal}
+          visible={isVisibleModal}
+        />
       </View>
       <View
         style={orientationPortrait ? styles.linePortrait : styles.lineLandscape}

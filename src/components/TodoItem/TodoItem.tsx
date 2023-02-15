@@ -8,16 +8,25 @@ import { styles } from "./TodoItem.styles"
 export const TodoItem = ({ todo, handlePress }: TTodoItemProps) => {
   const { text, id, isCompleted, isUrgent } = todo
 
-  const actions = [
-    { title: isCompleted ? Actions.UNDONE : Actions.DONE },
-    { title: Actions.REMOTE, systemIcon: "trash" }
+  const doneOrUndone = { title: isCompleted ? Actions.UNDONE : Actions.DONE }
+
+  const actionsTodos = [
+    doneOrUndone,
+    { title: Actions.REMOTE, systemIcon: "trash" },
+    { title: Actions.MOVETONOTURGENT }
+  ]
+
+  const actionsUrgentTodos = [
+    doneOrUndone,
+    { title: Actions.REMOTE, systemIcon: "trash" },
+    { title: Actions.MOVE }
   ]
   return (
     <View style={styles.container}>
       <ContextMenu
         previewBackgroundColor="#FFF"
         title="Actions"
-        actions={isUrgent ? actions : [...actions, { title: Actions.MOVE }]}
+        actions={isUrgent ? actionsTodos : actionsUrgentTodos}
         onPress={e => handlePress({ action: e.nativeEvent.name, id: id })}
         dropdownMenuMode={true}
       >

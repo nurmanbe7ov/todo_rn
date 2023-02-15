@@ -4,7 +4,8 @@ export enum Actions {
   DONE = "Done",
   UNDONE = "Undone",
   REMOTE = "Remove",
-  MOVE = "Move to urgent"
+  MOVE = "Move to urgent",
+  MOVETONOTURGENT = "Move to not urgent"
 }
 
 export type TTodoItemProps = {

@@ -7,7 +7,7 @@ const slice = createSlice({
   initialState,
   reducers: {
     setTodos: (state, action: PayloadAction<TTodo>) => {
-      state.todos.push(action.payload)
+      state.todos.unshift(action.payload)
     },
     deleteTodo: (state, action: PayloadAction<string>) => {
       state.todos = state.todos.filter(i => i.id !== action.payload)
